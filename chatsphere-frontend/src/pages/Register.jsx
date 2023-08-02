@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components'
-import {ToastContainer, toast} from 'react-toastify'
+import { ToastContainer, toast } from 'react-toastify'
 import "react-toastify/dist/ReactToastify.css"
 
 const Register = () => {
@@ -17,19 +17,28 @@ const Register = () => {
     handleValidation()
   };
 
-const handleValidation = () => {
-  const { password, confirmPassword, username, email } = values;
-  if(password!==confirmPassword){
-    toast.error("Password should be same for both fields" , {
-      position: "bottom-right",
-      autoClose:8000,
-      pauseOnHover: false,
-      draggable: true,
-      theme: "light",
-    })
-
+  const toastOptions = {
+    position: "bottom-right",
+    autoClose: 8000,
+    pauseOnHover: false,
+    draggable: true,
+    theme: "light",
   }
-}
+
+  const handleValidation = () => {
+    const { password, confirmPassword, username, email } = values;
+    if (password !== confirmPassword) {
+      toast.error("Password should be same for both fields ...", toastOptions);
+      return false
+    } else if (username.length < 3) {
+      toast.error("Username should be more than 3 characters ...", toastOptions);
+      return false
+    }
+    else if (password.length < 6) {
+      toast.error("Password should be more than 6 characters ...", toastOptions);
+      return false
+    }
+  }
 
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value })
