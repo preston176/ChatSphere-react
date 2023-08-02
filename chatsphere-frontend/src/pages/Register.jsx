@@ -11,20 +11,22 @@ const Register = () => {
   }
 
   return (
-    <FormContainer>
-      <form onSubmit={(e) => handleSubmit(e)}>
-        <div className="brand">
-          <img src="https://visualpharm.com/assets/952/Weixing-595b40b85ba036ed117da5e9.svg" alt="logo" />
-          <h1>ChatSphere</h1>
-        </div>
-        <input type="text" placeholder='Username' name='username' onChange={e => handleChange(e)} />
-        <input type="email" placeholder='Email' name='email' onChange={e => handleChange(e)} />
-        <input type="password" placeholder='Password' name='password' onChange={e => handleChange(e)} />
-        <input type="password" placeholder='Confirm password' name='confirmPassword' onChange={e => handleChange(e)} />
-        <button type='submit'>Create Account</button>
-        <Link to="/login"><span>already have an account ?</span></Link>
-      </form>
-    </FormContainer>
+    <>
+      <FormContainer>
+        <form onSubmit={(e) => handleSubmit(e)}>
+          <div className="brand">
+            <img src="https://visualpharm.com/assets/952/Weixing-595b40b85ba036ed117da5e9.svg" alt="logo" />
+            <h1>ChatSphere</h1>
+          </div>
+          <input type="text" placeholder='Username' name='username' onChange={e => handleChange(e)} />
+          <input type="email" placeholder='Email' name='email' onChange={e => handleChange(e)} />
+          <input type="password" placeholder='Password' name='password' onChange={e => handleChange(e)} />
+          <input type="password" placeholder='Confirm password' name='confirmPassword' onChange={e => handleChange(e)} />
+          <button type='submit'>Create Account</button>
+          <Link to="/login"><span>Have an existing account?</span></Link>
+        </form>
+      </FormContainer>
+    </>
   )
 }
 
@@ -71,6 +73,13 @@ const FormContainer = styled.div`
         box-shadow: 0px 1px 47px -3px rgba(0,212,255,0.75);
         transition: all 0.15s ease-in-out;
       }
+      &:hover {
+      
+        border: 0.1rem solid #00d4ff;
+        outline: none;
+        box-shadow: 0px 1px 47px -3px rgba(0,212,255,0.75);
+        transition: all 0.15s ease-in-out;
+      }
     }
     button {
       background-color: rgba(0,212,255,0.75);
@@ -89,7 +98,15 @@ const FormContainer = styled.div`
        transition: all 0.15s ease-in-out;
       }
     }
-    
+    span {
+      color: white;
+      text-transform: uppercase;
+      a {
+        color: #fafafa;
+        text-decoration: none;
+        font-weight: bolder;
+      }
+    }
   }
 `;
 
