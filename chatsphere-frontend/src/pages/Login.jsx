@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import axios from 'axios'
 import styled from 'styled-components'
@@ -29,11 +29,11 @@ const Login = () => {
       }
       if (data.status === true) {
         localStorage.setItem('chat-app-user', JSON.stringify(data.user))
-
+        navigate('/');
       }
 
     }
-    navigate('/');
+
   };
   // toast options declared for reusability
   const toastOptions = {
@@ -43,17 +43,22 @@ const Login = () => {
     draggable: true,
     theme: "light",
   }
+  useEffect(() => {
+    if(localStorage.getItem('chat-app-user')) {
+      navigate('/')
+    }
+  },[])
 
   const handleValidation = () => {
-    const { password, username,  } = values;
+    const { password, username, } = values;
     if (password === "") {
       toast.error("Email and Password is required ...", toastOptions);
       return false
-    } else if (username.length=== "") {
+    } else if (username.length === "") {
       toast.error("Email and Password is required ...", toastOptions);
       return false
     }
-   
+
     // returns true if conditions satisfied
     return true
   }
@@ -72,10 +77,10 @@ const Login = () => {
             <h1>ChatSphere</h1>
           </div>
           <input type="text" placeholder='Username' name='username' onChange={e => handleChange(e)}
-          min="3" />
-      
+            min="3" />
+
           <input type="password" placeholder='Password' name='password' onChange={e => handleChange(e)} />
-         
+
           <button type='submit'>Login</button>
           <Link to="/register"><span>Don't have an account?</span></Link>
         </form>
