@@ -1,12 +1,38 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components'
+import {ToastContainer, toast} from 'react-toastify'
+import "react-toastify/dist/ReactToastify.css"
+
 const Register = () => {
+  const [values, setValues] = useState({
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert("form")
+    handleValidation()
+  };
+
+const handleValidation = () => {
+  const { password, confirmPassword, username, email } = values;
+  if(password!==confirmPassword){
+    toast.error("Password should be same for both fields" , {
+      position: "bottom-right",
+      autoClose:8000,
+      pauseOnHover: false,
+      draggable: true,
+      theme: "light",
+    })
+
   }
+}
+
   const handleChange = (e) => {
+    setValues({ ...values, [e.target.name]: e.target.value })
 
   }
 
@@ -26,6 +52,7 @@ const Register = () => {
           <Link to="/login"><span>Have an existing account?</span></Link>
         </form>
       </FormContainer>
+      <ToastContainer />
     </>
   )
 }
