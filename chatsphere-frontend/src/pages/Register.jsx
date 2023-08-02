@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios'
 import styled from 'styled-components'
 import { ToastContainer, toast } from 'react-toastify'
 import "react-toastify/dist/ReactToastify.css"
@@ -12,11 +13,17 @@ const Register = () => {
     confirmPassword: "",
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    handleValidation()
+    // if whatever is input is true
+    if(handleValidation()) {
+      // destructure
+      const { password, confirmPassword, username, email } = values;
+      const { data } = await axios.post()
+    }
+    
   };
-
+// toast options declared for reusability
   const toastOptions = {
     position: "bottom-right",
     autoClose: 8000,
@@ -37,7 +44,11 @@ const Register = () => {
     else if (password.length < 6) {
       toast.error("Password should be more than 6 characters ...", toastOptions);
       return false
+    } else if (email === "") {
+      toast.error("Email is required", toastOptions)
     }
+    // returns true if conditions satisfied
+    return true
   }
 
   const handleChange = (e) => {
