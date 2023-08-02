@@ -4,6 +4,7 @@ import axios from 'axios'
 import styled from 'styled-components'
 import { ToastContainer, toast } from 'react-toastify'
 import "react-toastify/dist/ReactToastify.css"
+import { registerRoute } from '../utils/APIRoutes';
 
 const Register = () => {
   const [values, setValues] = useState({
@@ -19,7 +20,9 @@ const Register = () => {
     if(handleValidation()) {
       // destructure
       const { password, confirmPassword, username, email } = values;
-      const { data } = await axios.post()
+      const { data } = await axios.post(registerRoute, {
+        username,email,password
+      })
     }
     
   };
