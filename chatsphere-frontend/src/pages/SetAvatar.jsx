@@ -25,7 +25,23 @@ const SetAvatar = () => {
     }
 
     const setProfilePicture = async () => {
-        // Implement the logic for setting the profile picture using the selectedAvatar state
+       if(selectedAvatar === undefined) {
+        toast.error("Please select an avatar", toastOptions)
+       } else {
+        const user = await JSON.parse(localStorage.getItem("chat-app-user"))
+        const {data} = await axios.post(`${setAvatarRoute}/${user._id}`,
+        {
+            image: avatars[selectedAvatar]
+        })
+        if(data.isSet) {
+            user.isAvatarImageSet = true;
+            user.avatarImage = data.image;
+            localStorage.setItem("chat-app-user", JSON.stringify(user))
+            navigate('/')
+        } else {
+            toast.error("Error setting avatar. Please try again", toastOptions)
+        }
+       }
     }
 
     useEffect(() => { // Removed async from here as useEffect callback should not be an async function
@@ -50,6 +66,12 @@ const SetAvatar = () => {
 
     return (
         <>
+        {
+            isLoading ? <Container>
+                <img src={loader} alt="loader" />
+            </Container> : (
+
+           
             <Container>
                 <div className="title-container">
                     <h1>Select your profile avatar</h1>
@@ -67,6 +89,8 @@ const SetAvatar = () => {
                 </div> 
                 <button className='submit-btn' onClick={setProfilePicture}>Set as Profile Picture</button>
                  </Container>
+                 )
+        }
                 <ToastContainer />
           
         </>
