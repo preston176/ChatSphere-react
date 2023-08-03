@@ -44,10 +44,14 @@ const Login = () => {
     theme: "light",
   }
   useEffect(() => {
-    if(localStorage.getItem('chat-app-user')) {
-      navigate('/')
-    }
-  },[])
+    const checkLocalStorage = async () => {
+      if (localStorage.getItem('chat-app-user')) {
+        navigate('/');
+      }
+    };
+
+    checkLocalStorage();
+  }, [navigate]);
 
   const handleValidation = () => {
     const { password, username, } = values;
