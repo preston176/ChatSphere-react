@@ -66,7 +66,10 @@ export default function Contacts({ contacts, changeChat }) {
 const Container = styled.div`
   display: grid;
   grid-template-rows: 10% 75% 15%;
-  overflow: hidden;
+  @media screen and (max-width: 600px){
+    padding: 1px;
+    }
+  overflow: auto;
   background-color: #010101;
   .brand {
     display: flex;
@@ -138,16 +141,25 @@ const Container = styled.div`
     justify-content: center;
     align-items: center;
     gap: 2rem;
+    @media screen and (max-width: 600px){
+      display: none;
+    }
     .avatar {
       img {
         height: 4rem;
         max-inline-size: 100%;
       }
+      @media screen and (max-width: 600px){
+      display: none;
+    }
     }
     .username {
       h2 {
         color: white;
       }
+      @media screen and (max-width: 600px){
+      display: none;
+    }
     }
     @media screen and (min-width: 720px) and (max-width: 1080px) {
       gap: 0.5rem;

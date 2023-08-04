@@ -7,6 +7,7 @@ import { allUsersRoute, host } from "../utils/APIRoutes";
 import ChatContainer from "../components/ChatContainer";
 import Contacts from "../components/Contacts";
 import Welcome from "../components/Welcome";
+import Footer from '../components/Footer';
 
 export default function Chat() {
   const navigate = useNavigate();
@@ -66,7 +67,11 @@ export default function Chat() {
             <ChatContainer currentChat={currentChat} socket={socket} />
           )}
         </div>
+
       </Container>
+      <div className="footer">
+
+      </div>
     </>
   );
 }
@@ -89,5 +94,15 @@ const Container = styled.div`
     @media screen and (min-width: 720px) and (max-width: 1080px) {
       grid-template-columns: 35% 65%;
     }
+    @media screen and (max-width: 719px) {
+      /* For devices with width less than 720px, including smartphones */
+      grid-template-columns:0.5fr 1fr; /* Single column layout */
+      height: 90vh;
+      width: 90vw;
+      padding: 5vw; /* Add some padding for better spacing */
+    }
+    @media screen and (max-width: 600px) {
+      grid-template-columns:1fr;
+      width: fit-content;
   }
 `;
