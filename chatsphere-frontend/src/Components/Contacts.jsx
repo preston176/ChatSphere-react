@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Logo from "../assets/logo.svg";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronUp, faChevronDown } from "@fortawesome/free-solid-svg-icons";
 
 export default function Contacts({ contacts, changeChat }) {
   const [currentUserName, setCurrentUserName] = useState(undefined);
   const [currentUserImage, setCurrentUserImage] = useState(undefined);
   const [currentSelected, setCurrentSelected] = useState(undefined);
+  const [isContactsOpen, setIsContactsOpen] = useState(true);
+
   useEffect(async () => {
     const data = await JSON.parse(
       localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)
@@ -16,53 +20,70 @@ export default function Contacts({ contacts, changeChat }) {
   const changeCurrentChat = (index, contact) => {
     setCurrentSelected(index);
     changeChat(contact);
+    // Close the contacts list when a contact is selected
+    setIsContactsOpen(false);
   };
+
+  const toggleContacts = () => {
+    setIsContactsOpen((prevState) => !prevState);
+  };
+
   return (
     <>
       {currentUserImage && currentUserImage && (
-        <Container>
-          <div className="brand">
-            <img src={Logo} alt="logo" />
-            <h3>chatsphere</h3>
-          </div>
-          <div className="contacts">
-            {contacts.map((contact, index) => {
-              return (
+        <Wrapper>
+          <ToggleIcon onClick={toggleContacts}>
+            <FontAwesomeIcon icon={isContactsOpen ? faChevronUp : faChevronDown} />
+          </ToggleIcon>
+          <Container>
+            <div className="brand">
+              <img src={Logo} alt="logo" />
+              <h3>chatsphere</h3>
+              <p>select a chat</p>
+            </div>
+            <div className={`contacts ${isContactsOpen ? "open" : ""}`}>
+              {contacts.map((contact, index) => (
                 <div
                   key={contact._id}
-                  className={`contact ${index === currentSelected ? "selected" : ""
-                    }`}
+                  className={`contact ${index === currentSelected ? "selected" : ""}`}
                   onClick={() => changeCurrentChat(index, contact)}
                 >
                   <div className="avatar">
-                    <img
-                      src={`data:image/svg+xml;base64,${contact.avatarImage}`}
-                      alt=""
-                    />
+                    <img src={`data:image/svg+xml;base64,${contact.avatarImage}`} alt="" />
                   </div>
                   <div className="username">
                     <h3>{contact.username}</h3>
                   </div>
                 </div>
-              );
-            })}
-          </div>
-          <div className="current-user">
-            <div className="avatar">
-              <img
-                src={`data:image/svg+xml;base64,${currentUserImage}`}
-                alt="avatar"
-              />
+              ))}
             </div>
-            <div className="username">
-              <h2>{currentUserName}</h2>
+            <div className="current-user">
+              <div className="avatar">
+                <img src={`data:image/svg+xml;base64,${currentUserImage}`} alt="avatar" />
+              </div>
+              <div className="username">
+                <h2>{currentUserName}</h2>
+              </div>
             </div>
-          </div>
-        </Container>
+          </Container>
+        </Wrapper>
       )}
     </>
   );
 }
+
+const Wrapper = styled.div`
+  position: relative;
+  padding: 0;
+`;
+
+const ToggleIcon = styled.div`
+  position: absolute;
+  top: 0.5rem;
+  right: 1rem;
+  cursor: pointer;
+`;
+
 const Container = styled.div`
   display: grid;
   grid-template-rows: 10% 75% 15%;
@@ -74,6 +95,7 @@ const Container = styled.div`
   .brand {
     display: flex;
     align-items: center;
+    padding: 1rem;
     gap: 1rem;
     justify-content: center;
     img {
@@ -85,10 +107,10 @@ const Container = styled.div`
     }
   }
   .contacts {
-    display: flex;
+    display: none;
     flex-direction: column;
     align-items: center;
-    overflow: auto;
+    overflow: scroll;
     gap: 0.8rem;
     &::-webkit-scrollbar {
       width: 0.2rem;
@@ -125,13 +147,18 @@ const Container = styled.div`
         }
       }
       .username {
+       
         h3 {
           color: #000;
+ 
         }
       }
     }
     .selected {
       background-color: #00d9ff;
+    }
+    &.open {
+      display: flex;
     }
   }
 
@@ -156,6 +183,7 @@ const Container = styled.div`
     .username {
       h2 {
         color: white;
+       
       }
       @media screen and (max-width: 600px){
       display: none;
