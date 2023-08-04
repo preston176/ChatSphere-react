@@ -1,14 +1,21 @@
-import { useState } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
-import axios from 'axios'
-import styled from 'styled-components'
-import { ToastContainer, toast } from 'react-toastify'
-import "react-toastify/dist/ReactToastify.css"
-import { registerRoute } from '../utils/APIRoutes';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import styled from "styled-components";
+import { useNavigate, Link } from "react-router-dom";
+import Logo from "../assets/logo.svg";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { registerRoute } from "../utils/APIRoutes";
 
-const Register = () => {
-
+export default function Register() {
   const navigate = useNavigate();
+  const toastOptions = {
+    position: "top-right",
+    autoClose: 8000,
+    pauseOnHover: true,
+    draggable: true,
+    theme: "light",
+  };
   const [values, setValues] = useState({
     username: "",
     email: "",
@@ -16,90 +23,128 @@ const Register = () => {
     confirmPassword: "",
   });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    // if whatever is input is true
-    if (handleValidation()) {
-      // console.log("in validation", registerRoute)
-      // destructure
-      const { password, username, email } = values;
-      const { data } = await axios.post(registerRoute, {
-        username, email, password
-      });
-      if (data.status === false) {
-        toast.error(data.msg, toastOptions)
-      }
-      if (data.status === true) {
-        localStorage.setItem('chat-app-user', JSON.stringify(data.user))
-
-      }
-
+  useEffect(() => {
+    if (localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
+      navigate("/");
     }
-    navigate('/');
+  }, []);
+
+  const handleChange = (event) => {
+    setValues({ ...values, [event.target.name]: event.target.value });
   };
-  // toast options declared for reusability
-  const toastOptions = {
-    position: "bottom-right",
-    autoClose: 8000,
-    pauseOnHover: false,
-    draggable: true,
-    theme: "light",
-  }
 
   const handleValidation = () => {
     const { password, confirmPassword, username, email } = values;
     if (password !== confirmPassword) {
-      toast.error("Password should be same for both fields ...", toastOptions);
-      return false
+      toast.error(
+        "Password and confirm password should be same.",
+        toastOptions
+      );
+      return false;
     } else if (username.length < 3) {
-      toast.error("Username should be more than 3 characters ...", toastOptions);
-      return false
-    }
-    else if (password.length < 6) {
-      toast.error("Password should be more than 6 characters ...", toastOptions);
-      return false
+      toast.error(
+        "Username should be greater than 3 characters.",
+        toastOptions
+      );
+      return false;
+    } else if (password.length < 8) {
+      toast.error(
+        "Password should be equal or greater than 8 characters.",
+        toastOptions
+      );
+      return false;
     } else if (email === "") {
-      toast.error("Email is required", toastOptions)
+      toast.error("Email is required.", toastOptions);
+      return false;
     }
-    // returns true if conditions satisfied
-    return true
-  }
 
-  const handleChange = (e) => {
-    setValues({ ...values, [e.target.name]: e.target.value })
+    return true;
+  };
 
-  }
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (handleValidation()) {
+      const { email, username, password } = values;
+      const { data } = await axios.post(registerRoute, {
+        username,
+        email,
+        password,
+      });
+
+      if (data.status === false) {
+        toast.error(data.msg, toastOptions);
+      }
+      if (data.status === true) {
+        localStorage.setItem(
+          process.env.REACT_APP_LOCALHOST_KEY,
+          JSON.stringify(data.user)
+        );
+        navigate("/");
+      }
+    }
+  };
 
   return (
     <>
-      <FormContainer>
-        <form onSubmit={(e) => handleSubmit(e)}>
+      <FormContainer className="custom-cursor">
+        <form action="" onSubmit={(event) => handleSubmit(event)}>
           <div className="brand">
-            <img src="https://visualpharm.com/assets/952/Weixing-595b40b85ba036ed117da5e9.svg" alt="logo" />
-            <h1>ChatSphere</h1>
+            <img src={Logo} alt="logo" />
+            <h1>chatsphere</h1>
           </div>
-          <input type="text" placeholder='Username' name='username' onChange={e => handleChange(e)} />
-          <input type="email" placeholder='Email' name='email' onChange={e => handleChange(e)} />
-          <input type="password" placeholder='Password' name='password' onChange={e => handleChange(e)} />
-          <input type="password" placeholder='Confirm password' name='confirmPassword' onChange={e => handleChange(e)} />
-          <button type='submit'>Create Account</button>
-          <Link to="/login"><span>Have an existing account?</span></Link>
+          <input
+            type="text"
+            placeholder="Username"
+            name="username"
+            onChange={(e) => handleChange(e)}
+          />
+          <input
+            type="email"
+            placeholder="Email"
+            name="email"
+            onChange={(e) => handleChange(e)}
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            name="password"
+            onChange={(e) => handleChange(e)}
+          />
+          <input
+            type="password"
+            placeholder="Confirm Password"
+            name="confirmPassword"
+            onChange={(e) => handleChange(e)}
+          />
+          <button type="submit">Create User</button>
+          <span>
+            Already have an account ? <Link to="/login">Login.</Link>
+          </span>
         </form>
       </FormContainer>
       <ToastContainer />
     </>
-  )
+  );
 }
 
 const FormContainer = styled.div`
+
   height: 100vh;
-  width: 100vw;
   display: flex;
+  width: 100vw;
   flex-direction: column;
   justify-content: center;
   gap: 1rem;
   align-items: center;
-  background-color: #131324;
+  background-color: #111;
+  form {
+    &:hover{
+      background-color: #000;
+    transform: scale(1.01);
+    transition: all 0.15s ease-in-out
+};
+  }
+ 
   .brand {
     display: flex;
     align-items: center;
@@ -163,14 +208,10 @@ const FormContainer = styled.div`
       color: white;
       text-transform: uppercase;
       a {
-        color: #fafafa;
+        color: lightcyan;
         text-decoration: none;
         font-weight: bolder;
       }
     }
   }
 `;
-
-
-
-export default Register

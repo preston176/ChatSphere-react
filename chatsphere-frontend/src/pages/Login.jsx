@@ -1,108 +1,107 @@
-import { useEffect, useState } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
-import axios from 'axios'
-import styled from 'styled-components'
-import { ToastContainer, toast } from 'react-toastify'
-import "react-toastify/dist/ReactToastify.css"
-import { loginRoute } from '../utils/APIRoutes';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import styled from "styled-components";
+import { useNavigate, Link } from "react-router-dom";
+import Logo from "../assets/logo.svg";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { loginRoute } from "../utils/APIRoutes";
 
-const Login = () => {
-
+export default function Login() {
   const navigate = useNavigate();
-  const [values, setValues] = useState({
-    username: "",
-    password: "",
-  });
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    // if whatever is input is true
-    if (handleValidation()) {
-      // console.log("in validation", registerRoute)
-      // destructure
-      const { password, username } = values;
-      const { data } = await axios.post(loginRoute, {
-        username, password
-      });
-      if (data.status === false) {
-        toast.error(data.msg, toastOptions)
-      }
-      if (data.status === true) {
-        localStorage.setItem('chat-app-user', JSON.stringify(data.user))
-        navigate('/');
-      }
-
-    }
-
-  };
-  // toast options declared for reusability
+  const [values, setValues] = useState({ username: "", password: "" });
   const toastOptions = {
-    position: "bottom-right",
+    position: "top-right",
     autoClose: 8000,
     pauseOnHover: false,
     draggable: true,
     theme: "light",
-  }
+  };
   useEffect(() => {
-    const checkLocalStorage = async () => {
-      if (localStorage.getItem('chat-app-user')) {
-        navigate('/');
-      }
-    };
-
-    checkLocalStorage();
-  }, [navigate]);
-
-  const handleValidation = () => {
-    const { password, username, } = values;
-    if (password === "") {
-      toast.error("Email and Password is required ...", toastOptions);
-      return false
-    } else if (username.length === "") {
-      toast.error("Email and Password is required ...", toastOptions);
-      return false
+    if (localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
+      navigate("/");
     }
+  }, []);
 
-    // returns true if conditions satisfied
-    return true
-  }
+  const handleChange = (event) => {
+    setValues({ ...values, [event.target.name]: event.target.value });
+  };
 
-  const handleChange = (e) => {
-    setValues({ ...values, [e.target.name]: e.target.value })
+  const validateForm = () => {
+    const { username, password } = values;
+    if (username === "") {
+      toast.error("Please enter Email and Password...", toastOptions);
+      return false;
+    } else if (password === "") {
+      toast.error("Please enter Email and Password...", toastOptions);
+      return false;
+    }
+    return true;
+  };
 
-  }
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (validateForm()) {
+      const { username, password } = values;
+      const { data } = await axios.post(loginRoute, {
+        username,
+        password,
+      });
+      if (data.status === false) {
+        toast.error(data.msg, toastOptions);
+      }
+      if (data.status === true) {
+        localStorage.setItem(
+          process.env.REACT_APP_LOCALHOST_KEY,
+          JSON.stringify(data.user)
+        );
+
+        navigate("/");
+      }
+    }
+  };
 
   return (
     <>
       <FormContainer>
-        <form onSubmit={(e) => handleSubmit(e)}>
+        <form action="" onSubmit={(event) => handleSubmit(event)}>
           <div className="brand">
-            <img src="https://visualpharm.com/assets/952/Weixing-595b40b85ba036ed117da5e9.svg" alt="logo" />
-            <h1>ChatSphere</h1>
+            <img src={Logo} alt="logo" />
+            <h1>chatsphere</h1>
           </div>
-          <input type="text" placeholder='Username' name='username' onChange={e => handleChange(e)}
-            min="3" />
-
-          <input type="password" placeholder='Password' name='password' onChange={e => handleChange(e)} />
-
-          <button type='submit'>Login</button>
-          <Link to="/register"><span>Don't have an account?</span></Link>
+          <input
+            type="text"
+            placeholder="Username"
+            name="username"
+            onChange={(e) => handleChange(e)}
+            min="3"
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            name="password"
+            onChange={(e) => handleChange(e)}
+          />
+          <button type="submit">Log In</button>
+          <span>
+            Sign up <Link to="/register">Here</Link> if you don't have an account
+          </span>
         </form>
       </FormContainer>
       <ToastContainer />
     </>
-  )
+  );
 }
 
 const FormContainer = styled.div`
   height: 100vh;
-  width: 100vw;
   display: flex;
+  width: 100vw;
   flex-direction: column;
   justify-content: center;
   gap: 1rem;
   align-items: center;
-  background-color: #131324;
+  background-color: #111;
   .brand {
     display: flex;
     align-items: center;
@@ -166,14 +165,10 @@ const FormContainer = styled.div`
       color: white;
       text-transform: uppercase;
       a {
-        color: #fafafa;
+        color: lightcyan;
         text-decoration: none;
         font-weight: bolder;
       }
     }
   }
 `;
-
-
-
-export default Login;
